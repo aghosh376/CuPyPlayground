@@ -1,0 +1,62 @@
+#!/bin/bash
+#SBATCH --job-name howdy
+#SBATCH -o jobname_howdy.out
+#SBATCH --partition=test
+#SBATCH --time=01:00:00
+#SBATCH --constraint=gpu
+#SBATCH --nodes=1
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=5G
+# #SBATCH --mail-type END,FAIL
+# #SBATCH --mail-user larsson@ucmerced.edu
+#vv no restart after node failure
+#SBATCH --no-requeue
+
+source /home/amartyghosh/.bashrc
+echo "===================================================="
+echo "        Job ID is:        $SLURM_JOBID"
+echo "        Job name is:      $SLURM_JOB_NAME"
+echo "        Hostname is:      "`hostname`
+echo "        This dir is:      $thisDir"
+echo "        CPUs per Task is: $SLURM_CPUS_PER_TASK"
+echo "        loadedmodules:    $LOADEDMODULES"
+export MKL_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+echo "===================================================="
+early(){
+    echo "??????????????????????????"
+    echo "?? JOB TERMINATED EARLY ??"
+    echo "??????????????????????????"
+}
+trap 'early' 1 2 9 15
+
+echo "removing previous slurm output"
+rm -f slurm*.out
+
+
+
+
+export PYTHONUNBUFFERED=1
+
+
+echo "===================================================="
+echo "= starting at `date`"
+echo "===================================================="
+module load cuda
+
+nvidia-smi
+
+
+
+
+
+which python
+python hello.py >& hello.out
+
+
+echo "===================================================="
+echo "= done at `date`"
+echo "===================================================="
+
