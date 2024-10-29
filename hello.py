@@ -64,11 +64,11 @@ def contract(A, X, dim):
 
 
 def contract_with_plan(A, X, dim):
-    if (type(dim) != int and type(dim) == str) :
-        raise ValueError(f"Dim must be an int not a string")
+    if (type(dim) != int) :
+        raise ValueError(f"Dim must be an int")
 
-    A_shape = cp.array(A.shape)
-    X_shape = cp.array(X.shape)
+    A_shape = A.shape
+    X_shape = X.shape
 
     if A_shape[dim] != X_shape[1]:
       raise ValueError(f"Dimension mismatch: A has size {A_shape[dim]} along dimension {dim}, "f"but X has size {X_shape[1]}")
@@ -80,16 +80,31 @@ def contract_with_plan(A, X, dim):
     if X_dims > 2:
         raise ValueError(f"Contractiong matrix has {X_dims} dimensions when it should only have 2")
 
-    A_mode = tuple(map(chr, range(97, 97 + A_dims)))
-    X_mode = tuple(chr(97 + A_dims), A_mode[dim])
 
-    result_mode = tuple(A_mode[:dim] + X_mode[0] + A_mode[dim+1:])
-    result_shape = A_shape[:dim] + X_shape[0] + A_shape[dim+1:]
-    result_empty = cp.empty(result_shape)
+    collapsed_shape = (int(np.prod(A_shape[:dim]).item()), A_shape[dim], int(np.prod(A_shape[dim+1:]).item()))
+    A_collapsed = A.reshape(collapsed_shape)
+
+
+    #A_mode = tuple(map(chr, range(97, 97 + A_dims)))
+    #X_mode = (chr(97 + A_dims), A_mode[dim])
+    A_mode = ('a','b','c')
+    X_mode = ('d', 'b')
+
+    #result_mode = tuple(A_mode[:dim] + tuple(X_mode[0]) + A_mode[dim+1:])
+    #result_shape = A_shape[:dim] + tuple(X_shape[0]) + A_shape[dim+1:]
+    #result_empty = cp.empty(result_shape)
+
+    result_mode = ('a', 'd', 'c')
+    result_shape_collapsed = (collapsed_shape[0], X_shape[0], collapsed_shape[2])
+    result_collapsed = cp.empty(result_shape_collapsed)
 
     alpha = 1.0
     beta = 0.0
-    result = cutensor.contraction(alpha, A, A_mode, X, X_mode, beta, result_empty, result_mode)
+    #result = cutensor.contraction(alpha, A, A_mode, X, X_mode, beta, result_empty, result_mode)
+    result = cutensor.contraction(alpha, A_collapsed, A_mode, X, X_mode, beta, result_collapsed, result_mode)
+
+    result_shape = A_shape[:dim] + (X_shape[0],) + A_shape[dim+1:]
+    result = result.reshape(result_shape)
 
     return result
 
