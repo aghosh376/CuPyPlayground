@@ -80,7 +80,7 @@ def contract_with_plan(A, X, dim):
     if X_dims > 2:
         raise ValueError(f"Contractiong matrix has {X_dims} dimensions when it should only have 2")
 
-
+    #reshape the tensor to make contraction easier, needed to make sure they were ints because reshape kept crashing
     collapsed_shape = (int(np.prod(A_shape[:dim]).item()), A_shape[dim], int(np.prod(A_shape[dim+1:]).item()))
     A_collapsed = A.reshape(collapsed_shape)
 
@@ -107,7 +107,22 @@ def contract_with_plan(A, X, dim):
     result = result.reshape(result_shape)
 
     return result
+  
+def multipleContraction(A, matrices, contraction_dims):
+    result = A
 
+    # Check if matrices or contraction_dims is empty
+    if not matrices or not contraction_dims or len(matrices) != len(contraction_dims):
+        raise ValueError("Matrices and contraction dimensions must not be empty and must be of equal length.")
+
+    # Iterate through each matrix and corresponding contraction dimension
+    for i in range(len((matrices))):
+        dim = contraction_dims[i]  
+        result = contract_with_plan(result, matrices[i], dim)
+
+    return result
+      
+      
 
 alpha = 1.0
 beta = 0.0
