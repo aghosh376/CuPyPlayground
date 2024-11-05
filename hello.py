@@ -109,6 +109,7 @@ def contract_with_plan(A, X, dim):
     return result
   
 def multipleContraction(A, matrices, contraction_dims):
+  
     result = A
 
     # Check if matrices or contraction_dims is empty
@@ -122,6 +123,13 @@ def multipleContraction(A, matrices, contraction_dims):
 
     return result
       
+def sumMultiContraction(A, contraction_lists):
+    total = multipleContraction(A, contraction_lists[0], contraction_lists[1])
+    
+    for i in contraction_lists:
+       total += multipleContraction(A, i[0], i[1])
+    
+    return total
       
 
 alpha = 1.0
@@ -133,9 +141,9 @@ mode_ab = ('a','d', 'c')
 mode_abc = ('a', 'e')
 a = cp.random.random((3, 4, 5))
 b = cp.random.random((6, 4))
-c = cp.random.random((6, 7))
+c = cp.random.random((7, 6))
 ab = cp.empty((3, 6, 5))
-abc = cp.empty((3, 7))
+abc = cp.empty((3, 7, 5))
 
 result_AB = cutensor.contraction(alpha, a, mode_a, b, mode_b, beta, ab, mode_ab)
 
@@ -144,6 +152,15 @@ result_AB_func = contract_with_plan(a, b, 1)
 cp.cuda.Stream.null.synchronize()
 
 print(cp.allclose(result_AB, result_AB_func))
+
+contraction_matrices = [b, c]
+contraction_dims = [1, 1]  
+result_func = multipleContraction(a, contraction_matrices, contraction_dims)
+
+cp.cuda.Stream.null.synchronize()
+
+print("Does multipleContraction match manual contraction:", cp.allclose(result_ABC, result_func))
+
 
 #cutensor.contraction(alpha, ab, mode_ab, c, mode_c, beta, abc, mode_abc)
 #
