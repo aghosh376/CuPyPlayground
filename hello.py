@@ -122,12 +122,40 @@ def multipleContraction(A, matrices, contraction_dims):
         result = contract_with_plan(result, matrices[i], dim)
 
     return result
-      
+
 def sumMultiContraction(A, contraction_lists):
-    total = multipleContraction(A, contraction_lists[0], contraction_lists[1])
+    #total = multipleContraction(A, contraction_lists[0], contraction_lists[1])
     
-    for i in contraction_lists:
-       total += multipleContraction(A, i[0], i[1])
+    #for i in contraction_lists:
+    #   total += multipleContraction(A, i[0], i[1])
+    
+    # Reshape and stack A to match the batch dimensions
+    
+    contraction_matrices = [i[0] for i in contraction_lists]
+    contraction_dims = [i[1] for i in contraction_lists]
+    
+    A_shape = A.shape
+    batch_size = len(contraction_matrices)
+    
+    A_batched = cp.repeat(A[None, ...], batch_size, axis=0)
+    
+    if len(contraction_matrices) != len(contraction_dims):
+        raise ValueError("Contraction matrices and dimensions must have the same length.")
+    
+
+    # Prepare result storage
+    total = cp.zeros(A_shape[:contraction_dims[0]] + (contraction_matrices[0].shape[0],) + A_shape[contraction_dims[0]+1:], dtype=A.dtype)
+    
+    for i in range(batch_size):
+        contracted_result = A_batched[i]  # Set result equal to A shape
+        
+        dims = contraction_dims[i]
+        matrices = contraction_matrices[i]
+        # Perform the contraction with the current matrix
+        contracted_result = multipleContraction(contracted_result, matrices, dims)
+        
+        # Sum the results across all contractions
+        total += contracted_result
     
     return total
       
@@ -148,7 +176,6 @@ abc = cp.empty((3, 7, 5))
 result_AB = cutensor.contraction(alpha, a, mode_a, b, mode_b, beta, ab, mode_ab)
 
 result_AB_func = contract_with_plan(a, b, 1)
-result_ABC_func = contract_with_plan(result_AB_func, c, 1)
 
 cp.cuda.Stream.null.synchronize()
 
@@ -160,7 +187,7 @@ result_func = multipleContraction(a, contraction_matrices, contraction_dims)
 
 cp.cuda.Stream.null.synchronize()
 
-print("Does multipleContraction match manual contraction:", cp.allclose(result_ABC_func, result_func))
+print("Does multipleContraction match manual contraction:", cp.allclose(result_ABC, result_func))
 
 
 #cutensor.contraction(alpha, ab, mode_ab, c, mode_c, beta, abc, mode_abc)
