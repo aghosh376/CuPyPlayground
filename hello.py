@@ -148,6 +148,7 @@ abc = cp.empty((3, 7, 5))
 result_AB = cutensor.contraction(alpha, a, mode_a, b, mode_b, beta, ab, mode_ab)
 
 result_AB_func = contract_with_plan(a, b, 1)
+result_ABC_func = contract_with_plan(result_AB_func, c, 1)
 
 cp.cuda.Stream.null.synchronize()
 
@@ -159,7 +160,7 @@ result_func = multipleContraction(a, contraction_matrices, contraction_dims)
 
 cp.cuda.Stream.null.synchronize()
 
-print("Does multipleContraction match manual contraction:", cp.allclose(result_ABC, result_func))
+print("Does multipleContraction match manual contraction:", cp.allclose(result_ABC_func, result_func))
 
 
 #cutensor.contraction(alpha, ab, mode_ab, c, mode_c, beta, abc, mode_abc)
