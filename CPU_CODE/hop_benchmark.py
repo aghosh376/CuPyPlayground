@@ -6,12 +6,12 @@ import operator1D
 from ttns2 import contraction
 import time
 print("USE",os.environ["OMP_NUM_THREADS"],"threads")
-MAX_MEM_IN_GB = 250 / 2 / int(os.environ["OMP_NUM_THREADS"])
+MAX_MEM_IN_GB = 220 
 
 nDim = 5
 nBas = 3
 nSum = 10
-assert nBas**nDim * 8 * 2 * 1e-9 < MAX_MEM_IN_GB
+assert nBas**nDim * 8 * (3 +  int(os.environ["OMP_NUM_THREADS"])) * 1e-9 < MAX_MEM_IN_GB
 Ns = [nBas] * nDim
 Hop = operatornD.operatorSumOfProduct(nDim=nDim, nSum=nSum)
 for iSum in range(Hop.nSum):
