@@ -36,9 +36,9 @@ def contract(A, X, dim):
     if (type(dim) != int and type(dim) == str) :
       raise ValueError(f"Dim must be an int not a string")
     
-    if isinstance(A, np.array):
+    if isinstance(A, np.ndarray):
       A = cp.array(A)
-    if isinstance(X, np.array):
+    if isinstance(X, np.ndarray):
       X = cp.array(X)
 
     # Get the dimensions of the tensor and matrix
@@ -73,9 +73,9 @@ def contract_with_plan(A, X, dim):
         raise ValueError(f"Dim must be an int")
       
       
-    if isinstance(A, np.array):
+    if isinstance(A, np.ndarray):
         A = cp.array(A)
-    if isinstance(X, np.array):
+    if isinstance(X, np.ndarray):
         X = cp.array(X)
 
     A_shape = A.shape
@@ -123,7 +123,7 @@ def contract_with_plan(A, X, dim):
   
 def multipleContraction(A, matrices, contraction_dims):
   
-    if isinstance(A, np.array):
+    if isinstance(A, np.ndarray):
         A = cp.array(A)
   
     result = A
@@ -136,6 +136,7 @@ def multipleContraction(A, matrices, contraction_dims):
     for i in range(len((matrices))):
         dim = contraction_dims[i]  
         result = contract_with_plan(result, matrices[i], dim)
+        #print(f"After contraction {i}: result shape = {result.shape}")
 
     return result
 
@@ -145,22 +146,32 @@ def sumMultiContraction(A, contraction_lists, coefficients):
     #for i in contraction_lists:
     #   total += multipleContraction(A, i[0], i[1])
     
-    if isinstance(A, np.array):
+    if isinstance(A, np.ndarray):
         A = cp.array(A)
           
-    contraction_matrices = [i[0] for i in contraction_lists]
-    contraction_dims = [i[1] for i in contraction_lists]
-    
+    contraction_matrices = contraction_lists[0]
+    contraction_dims = contraction_lists[1]
+
     if len(contraction_matrices) != len(contraction_dims):
         raise ValueError("Contraction matrices and dimensions must have the same length.")
     
-    total = cp.zeros_like(A)
+    total = None
     
     if not coefficients:
         coefficients = [1.0] * len(contraction_lists) 
         
     for i in range(len(contraction_lists)):
         raw_result = multipleContraction(A, contraction_matrices[i], contraction_dims[i])
+        
+        if total is None:
+            total = cp.zeros_like(raw_result)
+
+        if total.shape != raw_result.shape:
+            raise ValueError(
+                f"Shape mismatch: total shape {total.shape} and raw_result shape {raw_result.shape} "
+                f"at index {i}"
+            )
+
         total += raw_result * coefficients[i]
 
     
@@ -184,21 +195,26 @@ def sumMultiContraction(A, contraction_lists, coefficients):
      #   total += contracted_result
     
     return total
-      
-A = np.random.random((3, 4, 5))
-matrices = [np.random.random((6, 4)), np.random.random((7, 6))]
-dims = [1, 1]
-coefficients = [1.5, -0.5]
-contraction_lists = [(matrices, dims)]
 
-result = sumMultiContraction(A, contraction_lists, coefficients)
-
-A_1 = contract_with_plan(A, matrices[0], dims[0])
-A_2 = contract_with_plan(A, matrices[1], dims[1])
-
-A_sum = A_1 * coefficients[0] + A_2 * coefficients[1]
-
-print("Result shape:", result.shape, "A_sum shape:", A_sum.shape)
+# A = np.random.random((3, 4, 5))
+# matrices1 = [np.random.random((6, 4)), np.random.random((7, 6))]
+# matrices2 = [np.random.random((6, 4)), np.random.random((7, 6))]
+#     
+# matrices = [ matrices1, matrices2]
+# dims1 = [1, 1]
+# dims2 = [1, 1]
+# dims = [dims1, dims2]
+# coefficients = [1.5, -0.5]
+# contraction_lists = [matrices, dims]
+# 
+# result = sumMultiContraction(A, contraction_lists, coefficients)
+# 
+# A_1 = multipleContraction(A, matrices1, dims1)
+# A_2 = multipleContraction(A, matrices2, dims2)
+# 
+# A_sum = A_1 * coefficients[0] + A_2 * coefficients[1]
+# 
+# print("Result shape:", result.shape, "A_sum shape:", A_sum.shape)
 
 #alpha = 1.0
 #beta = 0.0
@@ -259,23 +275,48 @@ def test_sumMultiContraction():
     num_tests = 10
     benchmark_times = []
     
+    np.random.seed(42)
+    
     for num_dims in range(6,9):
         for dim_sizes in range(2, 31):
             twrite = []
             
             try:
+                A = np.random.random([dim_sizes] * num_dims)
+               
+
+                matrices1 = [
+                    np.random.random((6, dim_sizes)),
+                    np.random.random((7, 6))
+                ]
+                matrices2 = [
+                    np.random.random((6, dim_sizes)),
+                    np.random.random((7, 6))
+                ]
+
+                matrices = [matrices1, matrices2]
+                dims1 = [1, 1]
+                dims2 = [1, 1]
+                dims = [dims1, dims2]
+                coefficients = [1.5, -0.5]
+                contraction_lists = [matrices, dims]
+
+               #  num_contractions = 2
+               #  contraction_dims_list = [1] * num_contractions
+               #  num_multiple_contractions = 2
+
+               #  contraction_matrix_list = [np.random.random((dim_sizes, dim_sizes)) for _ in range(num_contractions)]
+               #      
+               #  contraction_matrices = [contraction_matrix_list] * num_multiple_contractions
+               #  contraction_dims = [contraction_dims_list] * num_multiple_contractions
+
+               #  contraction_lists = [contraction_matrices, contraction_dims]
+
+               #  coefficients = [np.random.uniform(-2, 2) for i in range(len(num_multiple_contractions))]
+
+                
                 for i in range(num_tests):
-                    A = np.random.random([dim_sizes] * num_dims)
-                    
-                    num_contractions = 2
-                    contraction_dims = [1, 1]
-                    
-                    contraction_matrices = [np.random.random((dim_sizes, dim_sizes))] * num_contractions
-                    
-                    contraction_lists = [(contraction_matrices, contraction_dims)]
-                    
-                    coefficients = [np.random.uniform(-2, 2) for i in contraction_lists]
-                    
+                   
                     t1 = time.time()
                     
                     result = sumMultiContraction(A, contraction_lists, coefficients)
@@ -306,4 +347,4 @@ def test_sumMultiContraction():
 
 
 
-#test_sumMultiContraction()
+test_sumMultiContraction()

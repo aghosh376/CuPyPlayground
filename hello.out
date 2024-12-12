@@ -1,0 +1,42 @@
+Test passed for 6 dimensions, size 2:
+    Avg Time: 0.06396 s, Max Time: 0.63362 s, Min Time: 0.00063 s
+Test passed for 6 dimensions, size 3:
+    Avg Time: 0.00067 s, Max Time: 0.00094 s, Min Time: 0.00063 s
+Test passed for 6 dimensions, size 4:
+    Avg Time: 0.00068 s, Max Time: 0.00088 s, Min Time: 0.00064 s
+Test passed for 6 dimensions, size 5:
+    Avg Time: 0.00069 s, Max Time: 0.00089 s, Min Time: 0.00065 s
+Test passed for 6 dimensions, size 6:
+    Avg Time: 0.00076 s, Max Time: 0.00115 s, Min Time: 0.00069 s
+Test passed for 6 dimensions, size 7:
+    Avg Time: 0.00084 s, Max Time: 0.00131 s, Min Time: 0.00075 s
+Test passed for 6 dimensions, size 8:
+    Avg Time: 0.00105 s, Max Time: 0.00247 s, Min Time: 0.00087 s
+Test passed for 6 dimensions, size 9:
+    Avg Time: 0.00654 s, Max Time: 0.05444 s, Min Time: 0.00117 s
+Test passed for 6 dimensions, size 10:
+    Avg Time: 0.00173 s, Max Time: 0.00207 s, Min Time: 0.00166 s
+Test passed for 6 dimensions, size 11:
+    Avg Time: 0.00294 s, Max Time: 0.00844 s, Min Time: 0.00230 s
+Test passed for 6 dimensions, size 12:
+    Avg Time: 0.00460 s, Max Time: 0.01474 s, Min Time: 0.00344 s
+Test passed for 6 dimensions, size 13:
+    Avg Time: 0.00757 s, Max Time: 0.02725 s, Min Time: 0.00528 s
+Test passed for 6 dimensions, size 14:
+    Avg Time: 0.00883 s, Max Time: 0.00986 s, Min Time: 0.00864 s
+Test passed for 6 dimensions, size 15:
+    Avg Time: 0.01715 s, Max Time: 0.05478 s, Min Time: 0.01291 s
+Test passed for 6 dimensions, size 16:
+    Avg Time: 0.01890 s, Max Time: 0.01972 s, Min Time: 0.01872 s
+Test passed for 6 dimensions, size 17:
+    Avg Time: 0.03562 s, Max Time: 0.10868 s, Min Time: 0.02736 s
+Test passed for 6 dimensions, size 18:
+    Avg Time: 0.05333 s, Max Time: 0.19640 s, Min Time: 0.03733 s
+Test passed for 6 dimensions, size 19:
+    Avg Time: 0.05139 s, Max Time: 0.05241 s, Min Time: 0.05069 s
+Test passed for 6 dimensions, size 20:
+    Avg Time: 0.06882 s, Max Time: 0.06972 s, Min Time: 0.06866 s
+Test passed for 6 dimensions, size 21:
+    Avg Time: 0.12579 s, Max Time: 0.40862 s, Min Time: 0.09196 s
+Test passed for 6 dimensions, size 22:
+    Avg Time: 0.11644 s, Max Time: 0.11848 s, Min Time: 0.11552 s

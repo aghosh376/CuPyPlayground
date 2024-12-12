@@ -1,0 +1,39 @@
+/var/spool/slurmd/job838237/slurm_script: line 17: /home/amartyghosh/.bashrc: No such file or directory
+====================================================
+        Job ID is:        838237
+        Job name is:      howdy
+        Hostname is:      gnode001.cluster
+        This dir is:      
+        CPUs per Task is: 1
+        loadedmodules:    
+====================================================
+removing previous slurm output
+====================================================
+= starting at Thu Dec 12 11:22:04 PST 2024
+====================================================
+Thu Dec 12 11:22:04 2024       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 560.35.03              Driver Version: 560.35.03      CUDA Version: 12.6     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-PCIE-40GB          Off |   00000000:17:00.0 Off |                    0 |
+| N/A   23C    P0             32W /  250W |       1MiB /  40960MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+/home/amartyaghosh/miniforge3/envs/py311/bin/python
+Killed
+====================================================
+= done at Thu Dec 12 11:22:18 PST 2024
+====================================================
+slurmstepd: error: Detected 1 oom_kill event in StepId=838237.batch. Some of the step tasks have been OOM Killed.
